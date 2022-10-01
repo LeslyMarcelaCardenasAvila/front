@@ -5,9 +5,9 @@
 
       <h1>Fundacion Hospitalaria La Merced</h1>
       <nav>
-        <button v-if="is_auth" > Inicio </button>
-        <button v-if="is_auth" > Cuenta </button>
-        <button v-if="is_auth" > Cerrar Sesión </button>
+        <button v-if="is_auth" v-on:click="loadHome"> Inicio </button>
+        <button v-if="is_auth" v-on:click="loadAccount"> Cuenta </button>
+        <button v-if="is_auth" v-on:click="logOut"> Cerrar Sesión </button>
         <button v-if="!is_auth" v-on:click="loadLogIn" > Iniciar Sesión </button>
         <button v-if="!is_auth" v-on:click="loadSignUp" > Registrarse </button>
       </nav>
@@ -17,6 +17,7 @@
       <router-view
         v-on:completedLogIn="completedLogIn"
         v-on:completedSignUp="completedSignUp"
+        v-on:logOut="logOut"
       >
       </router-view>
     </div>
@@ -42,9 +43,27 @@ components: {
 },
 
 methods:{
+
+  loadHome: function() {
+    this.$router.push({ name: "home" });
+  },
+
+  loadAccount: function () {
+    this.$router.push({ name: "account" });
+  },
+
   verifyAuth: function() {
-    if(this.is_auth == false)
-      this.$router.push({name: "logIn"})
+   this.is_auth = localStorage.getItem("isAuth") || false;  
+    if (this.is_auth == false)
+      this.$router.push({ name: "logIn" });
+    else
+      this.$router.push({ name: "home" });
+  },
+
+  logOut: function () {
+    localStorage.clear();
+    alert("Sesión Cerrada");
+    this.verifyAuth();
   },
 
   loadLogIn: function(){
@@ -73,7 +92,7 @@ methods:{
 
 created: function(){
   this.verifyAuth()
-  }
+  },
 
 }
 </script>
